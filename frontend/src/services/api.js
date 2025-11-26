@@ -46,7 +46,6 @@ const handleResponse = async (response) => {
 // ==================== AUTHENTICATION API ====================
 
 const authAPI = {
-  // Login
   login: async (username, password) => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -55,12 +54,9 @@ const authAPI = {
         body: JSON.stringify({ username, password }),
       });
       const data = await handleResponse(response);
-      
-      // Simpan token
       if (data.success && data.token) {
         setToken(data.token);
       }
-      
       return data;
     } catch (error) {
       console.error('Error login:', error);
@@ -68,7 +64,6 @@ const authAPI = {
     }
   },
 
-  // Register (untuk setup admin pertama)
   register: async (username, password) => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -77,12 +72,9 @@ const authAPI = {
         body: JSON.stringify({ username, password }),
       });
       const data = await handleResponse(response);
-      
-      // Simpan token
       if (data.success && data.token) {
         setToken(data.token);
       }
-      
       return data;
     } catch (error) {
       console.error('Error register:', error);
@@ -90,7 +82,6 @@ const authAPI = {
     }
   },
 
-  // Get current user
   getCurrentUser: async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -103,12 +94,10 @@ const authAPI = {
     }
   },
 
-  // Logout
   logout: () => {
     removeToken();
   },
 
-  // Check if user is logged in
   isLoggedIn: () => {
     return !!getToken();
   },
@@ -117,7 +106,6 @@ const authAPI = {
 // ==================== SCHOOL DATA API ====================
 
 const schoolAPI = {
-  // Get semua data sekolah (PUBLIC)
   getSchoolData: async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/school`);
@@ -128,7 +116,6 @@ const schoolAPI = {
     }
   },
 
-  // Get data tentang (PUBLIC)
   getAboutData: async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/school/about`);
@@ -139,7 +126,6 @@ const schoolAPI = {
     }
   },
 
-  // Update data tentang (PROTECTED - Admin only)
   updateAboutData: async (data) => {
     try {
       const response = await fetch(`${API_BASE_URL}/school/about`, {
@@ -154,7 +140,6 @@ const schoolAPI = {
     }
   },
 
-  // Get data social media (PUBLIC)
   getSocialMediaData: async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/school/social-media`);
@@ -165,7 +150,6 @@ const schoolAPI = {
     }
   },
 
-  // Update data social media (PROTECTED - Admin only)
   updateSocialMediaData: async (data) => {
     try {
       const response = await fetch(`${API_BASE_URL}/school/social-media`, {
@@ -180,7 +164,6 @@ const schoolAPI = {
     }
   },
 
-  // Get data kontak (PUBLIC)
   getContactData: async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/school/contact`);
@@ -191,7 +174,6 @@ const schoolAPI = {
     }
   },
 
-  // Update data kontak (PROTECTED - Admin only)
   updateContactData: async (data) => {
     try {
       const response = await fetch(`${API_BASE_URL}/school/contact`, {
@@ -207,23 +189,58 @@ const schoolAPI = {
   },
 };
 
+// ==================== NEWS API (BARU) ====================
+
+const newsAPI = {
+  getAllNews: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/news`);
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      throw error;
+    }
+  },
+  createNews: async (data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/news`, {
+        method: 'POST',
+        headers: getHeaders(true),
+        body: JSON.stringify(data),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Error creating news:', error);
+      throw error;
+    }
+  },
+  deleteNews: async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/news/${id}`, {
+        method: 'DELETE',
+        headers: getHeaders(true),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Error deleting news:', error);
+      throw error;
+    }
+  }
+};
+
 // ==================== EXPORT ====================
 
 const api = {
-  // Auth methods
   auth: authAPI,
-  
-  // School methods
   school: schoolAPI,
-  
-  // Token helpers
+  news: newsAPI,       // <--- Pastikan ini ada
   getToken,
   setToken,
   removeToken,
+  isLoggedIn: () => !!getToken(),
 };
 
 export default api;
-
 
 // ==================== USAGE EXAMPLES ====================
 
