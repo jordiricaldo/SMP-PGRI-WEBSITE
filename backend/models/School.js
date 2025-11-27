@@ -1,19 +1,23 @@
-// models/School.js
 const mongoose = require('mongoose');
 
 const schoolSchema = new mongoose.Schema({
   about: {
+    // TAMBAHAN BARU: Deskripsi Profil Sekolah
+    deskripsi: {
+      type: String,
+      default: 'SMP PGRI 1 Ciputat adalah lembaga pendidikan jenjang Sekolah Menengah Pertama yang berlokasi di Ciputat, Tangerang Selatan. Kami berkomitmen mencetak generasi cerdas dan berkarakter.'
+    },
     visi: {
       type: String,
       default: 'Menjadi lembaga pendidikan yang unggul dalam prestasi, berakhlak mulia, dan berbudaya lingkungan.'
     },
     misi: {
       type: String,
-      default: 'Menyelenggarakan pendidikan berkualitas yang mengembangkan potensi siswa secara optimal dalam akademik dan non-akademik.'
+      default: 'Menyelenggarakan pendidikan berkualitas yang mengembangkan potensi siswa secara optimal.'
     },
     prestasi: {
       type: String,
-      default: 'Meraih berbagai prestasi di tingkat kota dan provinsi dalam bidang akademik, olahraga, dan seni.'
+      default: 'Juara Umum Paskibra Kota Tangsel, Juara Futsal Tingkat Kota.'
     }
   },
   socialMedia: {

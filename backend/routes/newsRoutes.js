@@ -6,6 +6,7 @@ const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 
 // Public
 router.get('/', newsController.getAllNews);
+router.get('/:id', newsController.getNewsById);
 
 // Protected (Admin Only)
 router.post('/', authMiddleware, adminMiddleware, newsController.createNews);

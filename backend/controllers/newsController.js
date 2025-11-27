@@ -32,3 +32,15 @@ exports.deleteNews = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+exports.getNewsById = async (req, res) => {
+  try {
+    const news = await News.findById(req.params.id);
+    if (!news) {
+      return res.status(404).json({ success: false, message: 'Berita tidak ditemukan' });
+    }
+    res.json({ success: true, data: news });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

@@ -35,11 +35,13 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smp-pgri'
 const authRoutes = require('./routes/authRoutes');
 const schoolRoutes = require('./routes/schoolRoutes');
 const newsRoutes = require('./routes/newsRoutes');
+const galleryRoutes = require('./routes/galleryRoutes');
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/school', schoolRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/gallery', galleryRoutes);
 
 // Health Check
 app.get('/', (req, res) => {

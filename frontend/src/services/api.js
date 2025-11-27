@@ -201,6 +201,17 @@ const newsAPI = {
       throw error;
     }
   },
+
+  getNewsById: async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/news/${id}`);
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Error fetching news detail:', error);
+      throw error;
+    }
+  },
+
   createNews: async (data) => {
     try {
       const response = await fetch(`${API_BASE_URL}/news`, {
@@ -228,12 +239,36 @@ const newsAPI = {
   }
 };
 
+// ==================== GALLERY API ====================
+const galleryAPI = {
+  getGallery: async () => {
+    const response = await fetch(`${API_BASE_URL}/gallery`);
+    return handleResponse(response);
+  },
+  addPhoto: async (data) => {
+    const response = await fetch(`${API_BASE_URL}/gallery`, {
+      method: 'POST',
+      headers: getHeaders(true),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(response);
+  },
+  deletePhoto: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/gallery/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(true),
+    });
+    return handleResponse(response);
+  }
+};
+
 // ==================== EXPORT ====================
 
 const api = {
   auth: authAPI,
   school: schoolAPI,
-  news: newsAPI,       // <--- Pastikan ini ada
+  news: newsAPI,
+  gallery: galleryAPI,
   getToken,
   setToken,
   removeToken,
