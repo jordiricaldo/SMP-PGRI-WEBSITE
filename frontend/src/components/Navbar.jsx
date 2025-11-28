@@ -1,7 +1,8 @@
+// frontend/src/components/Navbar.jsx
 import { useState } from 'react';
-import { Menu, X, Lock } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ kurikulumData }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const scrollToSection = (id) => {
@@ -18,13 +19,37 @@ export default function Navbar() {
             <span className="font-bold text-lg">SMP PGRI 1 CIPUTAT</span>
           </div>
 
+          {/* DESKTOP MENU */}
           <div className="hidden md:flex items-center space-x-8">
             <button onClick={() => scrollToSection('beranda')} className="hover:text-blue-200 transition">Beranda</button>
+            
+            {/* DROPDOWN KURIKULUM */}
+            <div className="relative group">
+              <button className="hover:text-blue-200 transition flex items-center gap-1 py-4">
+                Kurikulum <ChevronDown size={16}/>
+              </button>
+              <div className="absolute left-0 mt-0 w-48 bg-white rounded-md shadow-xl py-2 hidden group-hover:block text-gray-800 animate-fade-in border-t-4 border-blue-600">
+                <a 
+                  href={kurikulumData?.eraporUrl || '#'} 
+                  target="_blank" rel="noreferrer"
+                  className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-700 transition"
+                >
+                  E-Rapor
+                </a>
+                <a 
+                  href={kurikulumData?.absensiUrl || '#'} 
+                  target="_blank" rel="noreferrer"
+                  className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-700 transition"
+                >
+                  Absensi
+                </a>
+              </div>
+            </div>
+
             <button onClick={() => scrollToSection('tentang')} className="hover:text-blue-200 transition">Tentang</button>
             <button onClick={() => scrollToSection('berita')} className="hover:text-blue-200 transition">Berita</button>
             <button onClick={() => scrollToSection('sosial-media')} className="hover:text-blue-200 transition">Sosial Media</button>
             <button onClick={() => scrollToSection('kontak')} className="hover:text-blue-200 transition">Kontak</button>
-           
           </div>
 
           <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
@@ -32,9 +57,18 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* MOBILE MENU */}
         {isOpen && (
-          <div className="md:hidden pb-4 space-y-2">
+          <div className="md:hidden pb-4 space-y-2 bg-blue-800 p-4 rounded-b-lg">
             <button onClick={() => scrollToSection('beranda')} className="block w-full text-left py-2 hover:text-blue-200">Beranda</button>
+            
+            {/* Kurikulum Mobile */}
+            <div className="border-l-2 border-blue-600 ml-2 pl-2 my-2">
+              <p className="text-blue-300 text-sm mb-1 uppercase font-bold">Kurikulum</p>
+              <a href={kurikulumData?.eraporUrl || '#'} target="_blank" rel="noreferrer" className="block w-full text-left py-1 hover:text-blue-200">E-Rapor</a>
+              <a href={kurikulumData?.absensiUrl || '#'} target="_blank" rel="noreferrer" className="block w-full text-left py-1 hover:text-blue-200">Absensi</a>
+            </div>
+
             <button onClick={() => scrollToSection('tentang')} className="block w-full text-left py-2 hover:text-blue-200">Tentang</button>
             <button onClick={() => scrollToSection('berita')} className="block w-full text-left py-2 hover:text-blue-200">Berita</button>
             <button onClick={() => scrollToSection('sosial-media')} className="block w-full text-left py-2 hover:text-blue-200">Sosial Media</button>
