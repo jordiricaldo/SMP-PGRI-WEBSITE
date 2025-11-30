@@ -1,9 +1,10 @@
 // server.js
-// Backend Server dengan Express.js + Authentication
+// Backend Server dengan Express.js + Authentication + Upload
 
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path'); // <--- TAMBAHAN 1
 require('dotenv').config();
 
 const app = express();
@@ -31,17 +32,23 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smp-pgri'
   process.exit(1);
 });
 
+// === KONFIGURASI FOLDER UPLOAD (TAMBAHAN 2) ===
+// Agar file gambar bisa diakses lewat browser (misal: localhost:5000/uploads/foto.jpg)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
 const schoolRoutes = require('./routes/schoolRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
+const uploadRoutes = require('./routes/uploadRoutes'); // <--- TAMBAHAN 3
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/school', schoolRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/gallery', galleryRoutes);
+app.use('/api/upload', uploadRoutes); // <--- TAMBAHAN 4 (Ini Jalur Uploadnya)
 
 // Health Check
 app.get('/', (req, res) => {
@@ -50,7 +57,8 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
-      school: '/api/school'
+      school: '/api/school',
+      upload: '/api/upload'
     }
   });
 });

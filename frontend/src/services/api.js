@@ -262,6 +262,26 @@ const galleryAPI = {
   }
 };
 
+// ==================== UPLOAD API (BARU) ====================
+const uploadAPI = {
+  uploadImage: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch(`${API_BASE_URL}/upload`, {
+        method: 'POST',
+        // Jangan set Content-Type header manual untuk FormData
+        body: formData,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  }
+};
+
 // ==================== EXPORT ====================
 
 const api = {
@@ -269,6 +289,7 @@ const api = {
   school: schoolAPI,
   news: newsAPI,
   gallery: galleryAPI,
+  upload: uploadAPI,
   getToken,
   setToken,
   removeToken,
