@@ -1,9 +1,9 @@
-// frontend/src/components/Navbar.jsx
 import { useState } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
 export default function Navbar({ kurikulumData }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // Untuk Mobile Menu
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Untuk Dropdown Kurikulum
 
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -23,27 +23,42 @@ export default function Navbar({ kurikulumData }) {
           <div className="hidden md:flex items-center space-x-8">
             <button onClick={() => scrollToSection('beranda')} className="hover:text-blue-200 transition">Beranda</button>
             
-            {/* DROPDOWN KURIKULUM */}
-            <div className="relative group">
-              <button className="hover:text-blue-200 transition flex items-center gap-1 py-4">
-                Kurikulum <ChevronDown size={16}/>
+            {/* DROPDOWN KURIKULUM (SISTEM KLIK) */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="hover:text-blue-200 transition flex items-center gap-1 py-4 focus:outline-none"
+              >
+                Kurikulum 
+                <ChevronDown size={16} className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}/>
               </button>
-              <div className="absolute left-0 mt-0 w-48 bg-white rounded-md shadow-xl py-2 hidden group-hover:block text-gray-800 animate-fade-in border-t-4 border-blue-600">
-                <a 
-                  href={kurikulumData?.eraporUrl || '#'} 
-                  target="_blank" rel="noreferrer"
-                  className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-700 transition"
-                >
-                  E-Rapor
-                </a>
-                <a 
-                  href={kurikulumData?.absensiUrl || '#'} 
-                  target="_blank" rel="noreferrer"
-                  className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-700 transition"
-                >
-                  Absensi
-                </a>
-              </div>
+              
+              {isDropdownOpen && (
+                <>
+                  {/* Layar transparan untuk menutup menu jika klik di luar */}
+                  <div className="fixed inset-0 z-10" onClick={() => setIsDropdownOpen(false)}></div>
+                  
+                  {/* Isi Menu */}
+                  <div className="absolute left-0 mt-0 w-48 bg-white rounded-md shadow-xl py-2 text-gray-800 border-t-4 border-blue-600 z-20 animate-fade-in">
+                    <a 
+                      href={kurikulumData?.eraporUrl || '#'} 
+                      target="_blank" rel="noreferrer"
+                      className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-700 transition"
+                      onClick={() => setIsDropdownOpen(false)} // Tutup saat diklik
+                    >
+                      E-Rapor
+                    </a>
+                    <a 
+                      href={kurikulumData?.absensiUrl || '#'} 
+                      target="_blank" rel="noreferrer"
+                      className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-700 transition"
+                      onClick={() => setIsDropdownOpen(false)} // Tutup saat diklik
+                    >
+                      Absensi
+                    </a>
+                  </div>
+                </>
+              )}
             </div>
 
             <button onClick={() => scrollToSection('tentang')} className="hover:text-blue-200 transition">Tentang</button>
@@ -52,6 +67,7 @@ export default function Navbar({ kurikulumData }) {
             <button onClick={() => scrollToSection('kontak')} className="hover:text-blue-200 transition">Kontak</button>
           </div>
 
+          {/* Tombol Menu Mobile */}
           <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
