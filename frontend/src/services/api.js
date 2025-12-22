@@ -282,6 +282,18 @@ const uploadAPI = {
   }
 };
 
+const facilityAPI = {
+  getAll: async () => { const res = await fetch(`${API_BASE_URL}/facility`); return handleResponse(res); },
+  create: async (data) => { const res = await fetch(`${API_BASE_URL}/facility`, { method: 'POST', headers: getHeaders(true), body: JSON.stringify(data) }); return handleResponse(res); },
+  delete: async (id) => { const res = await fetch(`${API_BASE_URL}/facility/${id}`, { method: 'DELETE', headers: getHeaders(true) }); return handleResponse(res); }
+};
+
+const extracurricularAPI = {
+  getAll: async () => { const res = await fetch(`${API_BASE_URL}/extracurricular`); return handleResponse(res); },
+  create: async (data) => { const res = await fetch(`${API_BASE_URL}/extracurricular`, { method: 'POST', headers: getHeaders(true), body: JSON.stringify(data) }); return handleResponse(res); },
+  delete: async (id) => { const res = await fetch(`${API_BASE_URL}/extracurricular/${id}`, { method: 'DELETE', headers: getHeaders(true) }); return handleResponse(res); }
+};
+
 // ==================== EXPORT ====================
 
 const api = {
@@ -290,6 +302,8 @@ const api = {
   news: newsAPI,
   gallery: galleryAPI,
   upload: uploadAPI,
+  facility: facilityAPI, // <-- JANGAN LUPA DAFTARKAN DI SINI
+  extracurricular: extracurricularAPI, // <-- JANGAN LUPA DAFTARKAN DI SINI
   getToken,
   setToken,
   removeToken,

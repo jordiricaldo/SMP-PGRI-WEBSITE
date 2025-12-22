@@ -39,9 +39,9 @@ const schoolSchema = new mongoose.Schema({
     twitterUrl: { type: String, default: '' }
   },
   contact: {
-    alamat: { type: String, default: 'Jl. Pendidikan No. 123, Ciputat, Tangerang Selatan' },
-    telepon: { type: String, default: '(021) 1234-5678' },
-    email: { type: String, default: 'info@smppgri1ciputat.sch.id' },
+    alamat: { type: String, default: 'Jl. Pendidikan No. 30, Ciputat, Kota Tangerang Selatan, Banten 15411' },
+    telepon: { type: String, default: '(021) 7409827' },
+    email: { type: String, default: 'smppgri1cpt@gmail.com' },
     website: { type: String, default: 'www.smppgri1ciputat.sch.id' }
   },
   createdAt: { type: Date, default: Date.now },

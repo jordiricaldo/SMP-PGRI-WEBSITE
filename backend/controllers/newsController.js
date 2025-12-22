@@ -4,7 +4,15 @@ const News = require('../models/News');
 // Get All News (Public)
 exports.getAllNews = async (req, res) => {
   try {
-    const news = await News.find().sort({ createdAt: -1 }); // Urutkan dari yang terbaru
+    const { search } = req.query;
+    let query = {};
+    
+    // Jika ada parameter search, filter berdasarkan judul
+    if (search) {
+      query = { title: { $regex: search, $options: 'i' } }; // 'i' = case insensitive
+    }
+
+    const news = await News.find(query).sort({ createdAt: -1 });
     res.json({ success: true, data: news });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
