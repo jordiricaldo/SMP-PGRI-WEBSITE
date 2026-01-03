@@ -15,9 +15,10 @@ const galleryRoutes = require('./routes/galleryRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const facilityRoutes = require('./routes/facilityRoutes'); // <-- TAMBAH
 const extracurricularRoutes = require('./routes/extracurricularRoutes');
+const achievementRoutes = require('./routes/achievementRoutes');
 
 // Import Middleware Visitor (Pastikan file ini ada di folder middleware)
-const logVisitor = require('./middleware/visitorLogger'); 
+const logVisitor = require('./middleware/visitorLogger');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,14 +36,14 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smp-pgri'
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => {
-  console.log('✅ MongoDB Connected Successfully');
-  console.log(`📊 Database: ${mongoose.connection.name}`);
-})
-.catch(err => {
-  console.error('❌ MongoDB Connection Error:', err.message);
-  process.exit(1);
-});
+  .then(() => {
+    console.log('✅ MongoDB Connected Successfully');
+    console.log(`📊 Database: ${mongoose.connection.name}`);
+  })
+  .catch(err => {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    process.exit(1);
+  });
 
 // === 4. KONFIGURASI FOLDER UPLOAD ===
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -54,7 +55,7 @@ app.use('/api/auth', authRoutes);
 
 // Pasang logVisitor di route publik yang sering diakses user
 // Jadi setiap kali Frontend minta data sekolah, pengunjung dihitung +1
-app.use('/api/school', logVisitor, schoolRoutes); 
+app.use('/api/school', logVisitor, schoolRoutes);
 
 // Route berita & galeri
 app.use('/api/news', newsRoutes);
@@ -66,10 +67,11 @@ app.use('/api/upload', uploadRoutes);
 // Route fasilitas
 app.use('/api/facility', facilityRoutes);
 app.use('/api/extracurricular', extracurricularRoutes);
+app.use('/api/achievements', achievementRoutes);
 
 // === 6. HEALTH CHECK & ERROR HANDLING ===
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'SMP PGRI 1 CIPUTAT API is running!',
     version: '1.0.0'
   });
