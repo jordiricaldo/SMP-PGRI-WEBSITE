@@ -192,9 +192,9 @@ function HomePage() {
           <h2 className="text-4xl font-bold text-gray-900 mt-2">Membangun Masa Depan</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[200px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[220px]">
           
-          <div className="md:col-span-2 lg:col-span-2 row-span-2 bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col justify-center hover:shadow-xl transition duration-500 group" data-aos="fade-up">
+          <div className="md:col-span-2 lg:col-span-2 row-span-2 bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col justify-center hover:shadow-xl transition duration-500 group" data-aos="fade-up">
             <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition">
               <BookOpen size={28}/>
             </div>
