@@ -20,6 +20,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true); // New state to track initial data fetch
   const [uploading, setUploading] = useState(false); // Indikator upload
 
   // --- STATE CROPPER ---
@@ -55,6 +56,7 @@ export default function AdminDashboard() {
   }, []);
 
   const fetchData = async () => {
+    setDataLoading(true);
     try {
       const schoolRes = await api.school.getSchoolData();
       setAboutData(schoolRes.data.about);
@@ -87,6 +89,8 @@ export default function AdminDashboard() {
 
     } catch (error) {
       if (error.message && error.message.includes('401')) handleLogout();
+    } finally {
+      setDataLoading(false);
     }
   };
 
@@ -244,39 +248,46 @@ export default function AdminDashboard() {
         {/* PROFIL (KEPSEK) */}
         {activeTab === 'about' && (
           <div className="space-y-8 max-w-4xl animate-fade-in">
-            <form onSubmit={handleAboutUpdate}>
-              <div className="bg-white p-6 rounded-xl shadow mb-8">
-                <h3 className="text-xl font-bold mb-4 border-b pb-4 text-blue-800">🎓 Sambutan Kepala Sekolah</h3>
-                <div className="grid md:grid-cols-2 gap-6 mb-4">
-                  <div>
-                    <label className="block font-bold mb-2 text-sm">Foto Kepala Sekolah</label>
-                    <div className="mb-3 h-48 bg-gray-100 border-2 border-dashed rounded flex items-center justify-center relative overflow-hidden">
-                      {aboutData.sambutan?.fotoKepsek ? <img src={aboutData.sambutan.fotoKepsek} className="w-full h-full object-cover" /> : <span className="text-gray-400 text-xs">No Foto</span>}
-                      {uploading && <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs">Uploading...</div>}
+            {dataLoading ? (
+              <div className="bg-white p-12 rounded-xl shadow text-center">
+                <div className="animate-spin w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p className="text-gray-500 font-bold">Mengambil data sekolah...</p>
+              </div>
+            ) : (
+              <form onSubmit={handleAboutUpdate}>
+                <div className="bg-white p-6 rounded-xl shadow mb-8">
+                  <h3 className="text-xl font-bold mb-4 border-b pb-4 text-blue-800">🎓 Sambutan Kepala Sekolah</h3>
+                  <div className="grid md:grid-cols-2 gap-6 mb-4">
+                    <div>
+                      <label className="block font-bold mb-2 text-sm">Foto Kepala Sekolah</label>
+                      <div className="mb-3 h-48 bg-gray-100 border-2 border-dashed rounded flex items-center justify-center relative overflow-hidden">
+                        {aboutData.sambutan?.fotoKepsek ? <img src={aboutData.sambutan.fotoKepsek} className="w-full h-full object-cover" /> : <span className="text-gray-400 text-xs">No Foto</span>}
+                        {uploading && <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs">Uploading...</div>}
+                      </div>
+                      {/* UPDATE: Pakai type='kepsek' */}
+                      <input type="file" accept="image/*" className="text-sm" onChange={(e) => onFileSelect(e, 'kepsek')} />
                     </div>
-                    {/* UPDATE: Pakai type='kepsek' */}
-                    <input type="file" accept="image/*" className="text-sm" onChange={(e) => onFileSelect(e, 'kepsek')} />
+                    <div className="space-y-4">
+                      <div><label className="block font-bold mb-1 text-sm">Nama Kepala Sekolah</label><input className="w-full border p-2 rounded" value={aboutData.sambutan?.namaKepsek || ''} onChange={e => setAboutData({ ...aboutData, sambutan: { ...aboutData.sambutan, namaKepsek: e.target.value } })} /></div>
+                      <div><label className="block font-bold mb-1 text-sm">Judul Sambutan</label><input className="w-full border p-2 rounded" value={aboutData.sambutan?.judul || ''} onChange={e => setAboutData({ ...aboutData, sambutan: { ...aboutData.sambutan, judul: e.target.value } })} /></div>
+                    </div>
                   </div>
-                  <div className="space-y-4">
-                    <div><label className="block font-bold mb-1 text-sm">Nama Kepala Sekolah</label><input className="w-full border p-2 rounded" value={aboutData.sambutan?.namaKepsek || ''} onChange={e => setAboutData({ ...aboutData, sambutan: { ...aboutData.sambutan, namaKepsek: e.target.value } })} /></div>
-                    <div><label className="block font-bold mb-1 text-sm">Judul Sambutan</label><input className="w-full border p-2 rounded" value={aboutData.sambutan?.judul || ''} onChange={e => setAboutData({ ...aboutData, sambutan: { ...aboutData.sambutan, judul: e.target.value } })} /></div>
-                  </div>
+                  <textarea className="w-full border p-2 rounded h-32" value={aboutData.sambutan?.konten || ''} onChange={e => setAboutData({ ...aboutData, sambutan: { ...aboutData.sambutan, konten: e.target.value } })} />
                 </div>
-                <textarea className="w-full border p-2 rounded h-32" value={aboutData.sambutan?.konten || ''} onChange={e => setAboutData({ ...aboutData, sambutan: { ...aboutData.sambutan, konten: e.target.value } })} />
-              </div>
 
-              <div className="bg-white p-6 rounded-xl shadow mb-8">
-                <h3 className="text-xl font-bold mb-4 border-b pb-4 text-blue-800">Visi Misi</h3>
-                <div className="space-y-4">
-                  <textarea className="w-full border p-3 rounded h-24" placeholder="Deskripsi Singkat" value={aboutData.deskripsi || ''} onChange={e => setAboutData({ ...aboutData, deskripsi: e.target.value })} />
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <textarea className="w-full border p-2 rounded h-24" placeholder="Visi" value={aboutData.visi} onChange={e => setAboutData({ ...aboutData, visi: e.target.value })} />
-                    <textarea className="w-full border p-2 rounded h-24" placeholder="Misi" value={aboutData.misi} onChange={e => setAboutData({ ...aboutData, misi: e.target.value })} />
+                <div className="bg-white p-6 rounded-xl shadow mb-8">
+                  <h3 className="text-xl font-bold mb-4 border-b pb-4 text-blue-800">Visi Misi</h3>
+                  <div className="space-y-4">
+                    <textarea className="w-full border p-3 rounded h-24" placeholder="Deskripsi Singkat" value={aboutData.deskripsi || ''} onChange={e => setAboutData({ ...aboutData, deskripsi: e.target.value })} />
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <textarea className="w-full border p-2 rounded h-24" placeholder="Visi" value={aboutData.visi} onChange={e => setAboutData({ ...aboutData, visi: e.target.value })} />
+                      <textarea className="w-full border p-2 rounded h-24" placeholder="Misi" value={aboutData.misi} onChange={e => setAboutData({ ...aboutData, misi: e.target.value })} />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <button disabled={loading} className="w-full bg-blue-600 text-white px-6 py-4 rounded-xl hover:bg-blue-700 shadow-xl font-bold">SIMPAN PERUBAHAN</button>
-            </form>
+                <button disabled={loading} className="w-full bg-blue-600 text-white px-6 py-4 rounded-xl hover:bg-blue-700 shadow-xl font-bold">SIMPAN PERUBAHAN</button>
+              </form>
+            )}
           </div>
         )}
 
