@@ -1,16 +1,29 @@
 // server.js
-// Backend Server dengan Express.js + Authentication + Upload
+// Backend Server dengan Express.js + Authentication + Upload + Visitor Log
 
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const path = require('path'); // <--- TAMBAHAN 1
+const path = require('path');
 require('dotenv').config();
+
+// === 1. IMPORT SEMUA ROUTES & MIDDLEWARE DI SINI (PALING ATAS) ===
+const authRoutes = require('./routes/authRoutes');
+const schoolRoutes = require('./routes/schoolRoutes');
+const newsRoutes = require('./routes/newsRoutes');
+const galleryRoutes = require('./routes/galleryRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+const facilityRoutes = require('./routes/facilityRoutes'); // <-- TAMBAH
+const extracurricularRoutes = require('./routes/extracurricularRoutes');
+const achievementRoutes = require('./routes/achievementRoutes');
+
+// Import Middleware Visitor (Pastikan file ini ada di folder middleware)
+const logVisitor = require('./middleware/visitorLogger');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// === 2. MIDDLEWARE GLOBAL ===
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   credentials: true
@@ -18,48 +31,49 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Database Connection
+// === 3. DATABASE CONNECTION ===
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smp-pgri', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => {
-  console.log('✅ MongoDB Connected Successfully');
-  console.log(`📊 Database: ${mongoose.connection.name}`);
-})
-.catch(err => {
-  console.error('❌ MongoDB Connection Error:', err.message);
-  process.exit(1);
-});
+  .then(() => {
+    console.log('✅ MongoDB Connected Successfully');
+    console.log(`📊 Database: ${mongoose.connection.name}`);
+  })
+  .catch(err => {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    process.exit(1);
+  });
 
-// === KONFIGURASI FOLDER UPLOAD (TAMBAHAN 2) ===
-// Agar file gambar bisa diakses lewat browser (misal: localhost:5000/uploads/foto.jpg)
+// === 4. KONFIGURASI FOLDER UPLOAD ===
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Import Routes
-const authRoutes = require('./routes/authRoutes');
-const schoolRoutes = require('./routes/schoolRoutes');
-const newsRoutes = require('./routes/newsRoutes');
-const galleryRoutes = require('./routes/galleryRoutes');
-const uploadRoutes = require('./routes/uploadRoutes'); // <--- TAMBAHAN 3
+// === 5. SETUP ROUTES (JALUR API) ===
 
-// Routes
+// Auth tidak perlu visitor log
 app.use('/api/auth', authRoutes);
-app.use('/api/school', schoolRoutes);
+
+// Pasang logVisitor di route publik yang sering diakses user
+// Jadi setiap kali Frontend minta data sekolah, pengunjung dihitung +1
+app.use('/api/school', logVisitor, schoolRoutes);
+
+// Route berita & galeri
 app.use('/api/news', newsRoutes);
 app.use('/api/gallery', galleryRoutes);
-app.use('/api/upload', uploadRoutes); // <--- TAMBAHAN 4 (Ini Jalur Uploadnya)
 
-// Health Check
+// Route upload
+app.use('/api/upload', uploadRoutes);
+
+// Route fasilitas
+app.use('/api/facility', facilityRoutes);
+app.use('/api/extracurricular', extracurricularRoutes);
+app.use('/api/achievements', achievementRoutes);
+
+// === 6. HEALTH CHECK & ERROR HANDLING ===
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'SMP PGRI 1 CIPUTAT API is running!',
-    version: '1.0.0',
-    endpoints: {
-      auth: '/api/auth',
-      school: '/api/school',
-      upload: '/api/upload'
-    }
+    version: '1.0.0'
   });
 });
 
@@ -80,9 +94,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
+// === 7. START SERVER ===
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 CORS Origin: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}`);
 });

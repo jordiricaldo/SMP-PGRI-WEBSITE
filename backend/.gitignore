@@ -39,5 +39,3 @@ coverage/
 .cache/
 temp/
 tmp/
-
-backend/uploads/
