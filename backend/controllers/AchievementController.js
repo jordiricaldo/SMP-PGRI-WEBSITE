@@ -3,7 +3,7 @@ const Achievement = require('../models/Achievement');
 exports.getAll = async (req, res) => {
     try {
         const achievements = await Achievement.find().sort({ date: -1 });
-        res.json(achievements);
+        res.json({ success: true, data: achievements });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
